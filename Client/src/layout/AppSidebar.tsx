@@ -28,10 +28,10 @@ type NavItem = {
 const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
-    name: "Dashboard",
+    name: "Bảng điều khiển",
     subItems: [
       { name: "Tổng quan", path: "/", pro: false },
-      { name: "Ecommerce", path: "/2", pro: false }
+      { name: "Tồn kho", path: "/inventorypage", pro: false }
     ],
   },
   {
@@ -39,6 +39,8 @@ const navItems: NavItem[] = [
     name: "Quản Lý",
     subItems: [
       { name: "Nhập kho", path: "/receipt", pro: false },
+      { name: "Xuất kho", path: "/export", pro: false },
+      { name: "Nhân viên", path: "/manage-users", pro: false },
     ],
   },
   {

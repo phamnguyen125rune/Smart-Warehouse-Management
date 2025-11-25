@@ -19,6 +19,11 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import ProductReceipt from "./pages/Management/ProductReceipt";
+import Inventorypage from "./pages/Dashboard/InventoryPage"
+import CreateExportSlipPage from './pages/Management/CreateExportSlipPage';
+import ManageUsersPage from "./pages/Management/ManageUsersPage";
+import ProtectedRoute from './components/common/ProtectedRoute';
+
 
 export default function App() {
   return (
@@ -30,9 +35,14 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
             
-            {/* Management Layout */}
-            <Route index path="/receipt" element={<ProductReceipt />} />
+            <Route index path="/inventorypage" element={<Inventorypage />} />
 
+            {/* Management Layout */}
+            <Route element={<ProtectedRoute allowedRoles={['manager']} />}>
+              <Route path="/receipt" element={<ProductReceipt />} />
+              <Route path="/export" element={<CreateExportSlipPage />} />
+              <Route path="/manage-users" element={<ManageUsersPage />} />
+            </Route>
             {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/calendar" element={<Calendar />} />
