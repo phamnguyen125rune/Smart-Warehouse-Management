@@ -32,5 +32,9 @@ export const adminService = {
   // DELETE: Xóa user -> Trả về AdminResponse
   deleteUser: (userId: number) => {
     return axiosClient.delete<any, AdminResponse>(`/admin/users/${userId}`);
+  },
+  // GHi log
+  getAuditLogs: () => {
+    return axiosClient.get<any, any[]>('/admin/audit-logs');
   }
 };

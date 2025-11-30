@@ -29,5 +29,9 @@ export const authService = {
   logout: () => {
     localStorage.removeItem('accessToken');
     window.location.href = '/signin';
+  },
+  
+  changePassword: (data: { current_password: string; new_password: string }) => {
+    return axiosClient.put('/auth/change-password', data);
   }
 };

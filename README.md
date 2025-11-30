@@ -81,7 +81,6 @@ Dự án được xây dựng theo **kiến trúc client-server tách biệt**, 
 * **uv**: Trình quản lý gói Python, cài đặt bằng `pip install uv`.
 
 ### 4.1 Thiết đặt DB
-```bash
 #### PHẦN 1: TẢI MYSQL
 
 **Hướng dẫn Tải và Cài đặt Chính xác**
@@ -124,7 +123,6 @@ Sau khi cài đặt xong, MySQL Server sẽ đang chạy dưới dạng một d�
 2.  Tìm dòng `SQLALCHEMY_DATABASE_URI`.
 3.  Sửa nó thành chuỗi kết nối đến CSDL MySQL bạn vừa tạo, nhớ thay `your_password` bằng mật khẩu root bạn đã đặt trong quá trình cài đặt.
 
-```python
 # /server/config.py
 
 class Config:
@@ -134,7 +132,6 @@ class Config:
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:your_password@localhost/smart_warehouse'
     
     # ...
-```
 
 **Hiện tại đang là:**
 `SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:phamtrungnguyen12c8@localhost/smart_warehouse'`
@@ -194,6 +191,19 @@ python -m flask seed
 
 
 ```
+ngoài ra nếu muốn tạo lại csdl hãy thực hiện các bước sau.
+# 1. (Thủ công) Xóa thư mục 'migrations' bằng chuột phải -> Delete
+# 2. Chạy SQL: DROP DATABASE smart_warehouse; CREATE DATABASE smart_warehouse CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# 3. Hoặc xóa thủ công (Drop DB) và chạy ScriptS: CREATE DATABASE smart_warehouse CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+# 4. Trở về Dự án. Chạy lần lượt các lệnh sau tại terminal server:
+$env:FLASK_APP = "main.py"
+Remove-Item -Recurse -Force migrations  
+python -m flask db init
+python -m flask db migrate -m "Reset DB"
+python -m flask db upgrade
+python -m flask seed # Chạy seed với 2 user và khoảng 100 sản phẩm có sẵn
+python -m app.utils.mongo_sync # Lệnh này sẽ đồng bộ hóa lên mongodb, hữu ích khi cả hai xung đột trong môi trường phát triển.
 
 ### 4.2. Cài Đặt Backend (Server)
 

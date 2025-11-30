@@ -16,6 +16,10 @@ export const warehouseService = {
     }) as Promise<ApiResponse<any>>;
   },
 
+  createProduct: async (data: any): Promise<ApiResponse<Product>> => {
+    return axiosClient.post('/v1/products', data) as Promise<ApiResponse<Product>>;
+  },
+  
   getProducts: async (): Promise<ApiResponse<Product[]>> => {
     return axiosClient.get('/v1/products') as Promise<ApiResponse<Product[]>>;
   },
@@ -26,5 +30,9 @@ export const warehouseService = {
 
   createExportSlip: async (data: CreateExportSlipPayload): Promise<ApiResponse<any>> => {
     return axiosClient.post('/v1/export-slips', data) as Promise<ApiResponse<any>>;
+  },
+  
+  updateProduct: async (id: number, data: any): Promise<ApiResponse<Product>> => {
+    return axiosClient.put(`/v1/products/${id}`, data) as Promise<ApiResponse<Product>>;
   }
 };

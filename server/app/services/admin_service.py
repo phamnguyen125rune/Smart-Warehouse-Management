@@ -34,7 +34,14 @@ class AdminService:
         user = db.session.get(User, user_id)
         if not user:
             raise ValueError("User không tồn tại")
-            
+        if user.check_password(new_pass):
+            raise ValueError("Mật khẩu mới không được trùng với mật khẩu cũ")
+        # Gửi thông báo cho nhân viên biết
+        NotificationService.send_system_alert(
+            recipient_id=user.id,
+            title="Mật khẩu đã được thay đổi",
+            message="Quản trị viên vừa thực hiện thay đổi mật khẩu cho tài khoản này."
+        )
         user.set_password(new_pass)
         db.session.commit()
 

@@ -71,3 +71,30 @@ def upload_avatar():
         return jsonify({"message": "OK", "avatar_url": url}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+@auth_bp.route('/change-password', methods=['PUT'])
+@jwt_required()
+def change_password():
+    """User tự đổi mật khẩu của mình"""
+    user_id = get_jwt_identity()
+    user = db.session.get(User, user_id)
+    
+    data = request.get_json()
+    current_password = data.get('current_password')
+    new_password = data.get('new_password')
+
+    if not current_password or not new_password:
+        return jsonify({"error": "Vui lòng nhập mật khẩu hiện tại và mật khẩu mới"}), 400
+
+    # Kiểm tra mật khẩu cũ có đúng không
+    if not user.check_password(current_password):
+        return jsonify({"error": "Mật khẩu hiện tại không đúng"}), 401
+
+    # Đổi pass
+    try:
+        user.set_password(new_password)
+        db.session.commit()
+        return jsonify({"message": "Đổi mật khẩu thành công"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500

@@ -9,7 +9,8 @@ import { ThemeProvider } from "./context/ThemeContext.tsx";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from './context/AuthContext';
 
-const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+// const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const clientId = "875427513684-mtghm9brsutlknut69bf2d53muop860g.apps.googleusercontent.com"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -13,7 +13,7 @@ def create_app(config_class=Config):
     jwt.init_app(app)
     bcrypt.init_app(app)
     cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
-
+    
     # 1. Warehouse
     from app.api.warehouse_routes import warehouse_bp
     app.register_blueprint(warehouse_bp, url_prefix='/api/v1') 
@@ -21,6 +21,7 @@ def create_app(config_class=Config):
     # 2. Auth
     from app.api.auth_routes import auth_bp
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
+
     # 3. Admin
     from app.api.admin_routes import admin_bp
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
@@ -28,5 +29,9 @@ def create_app(config_class=Config):
     # 4. [MỚI] File Routes (Để hiện ảnh)
     from app.api.file_routes import file_bp
     app.register_blueprint(file_bp, url_prefix='/') 
-
+    
+    # 5. Notification
+    from app.api.notification_routes import notification_bp
+    app.register_blueprint(notification_bp, url_prefix='/api/notifications')
+    
     return app

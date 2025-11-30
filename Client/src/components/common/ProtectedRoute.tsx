@@ -27,8 +27,8 @@ const ProtectedRoute = ({ allowedRoles }: ProtectedRouteProps) => {
         // Người dùng đã đăng nhập nhưng không có quyền
         // Chuyển hướng họ đến một trang "Không có quyền" (Forbidden)
         // hoặc trang dashboard chính, tùy theo trải nghiệm bạn muốn.
-        // Ở đây, chúng ta sẽ chuyển hướng về trang profile mặc định.
-        return <Navigate to="/profile" replace />;
+        // Ở đây, chúng ta sẽ chuyển hướng về trang home.
+        return <Navigate to="/" replace />;
     }
 
     // 4. Nếu tất cả kiểm tra đều qua, hiển thị nội dung của trang

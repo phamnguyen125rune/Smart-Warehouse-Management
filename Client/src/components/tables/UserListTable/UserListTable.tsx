@@ -5,10 +5,10 @@ import {
   TableHeader,
   TableRow,
 } from "../../ui/table"; 
-import { UserData } from "../../../pages/Management/ManageUsersPage";
+import { AdminUser } from "../../../types/admin.types";
 
 interface UserListTableProps {
-  users: UserData[];
+  users: AdminUser[];
   onSelectUser: (userId: number) => void;
   selectedUserId: number | null; // Thêm prop này để biết dòng nào đang được chọn
 }

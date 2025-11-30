@@ -20,9 +20,9 @@ def process_ocr(image_path: str) -> str:
     # --- Dữ liệu giả lập ---
     # Danh sách các sản phẩm mẫu để tạo dữ liệu ngẫu nhiên
     sample_products = [
-        "Sua Tuoi Vinamilk 1L",
-        "Mi Hao Hao Tom Chua Cay",
-        "Nuoc Suoi Lavie 500ml",
+        "Banh Gao One Five",
+        "Banh Gao One Three",
+        "Banh Gao One Four",
         "Banh Gao One One",
         "Dau An Truong An 1L",
         "Nuoc Mam Nam Ngu 500ml"

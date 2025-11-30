@@ -28,6 +28,7 @@ class Product(db.Model):
     description = db.Column(db.Text, nullable=True)
     quantity_in_stock = db.Column(db.Integer, nullable=False, default=0)
 
+    standard_price = db.Column(db.Float, default=0)
     # Mối quan hệ với các chi tiết phiếu
     import_details = db.relationship('ImportSlipDetail', backref='product', lazy='dynamic')
     export_details = db.relationship('ExportSlipDetail', backref='product', lazy='dynamic')
@@ -192,22 +193,61 @@ class NotificationCategory(db.Model):
     def __repr__(self):
         return f'<NotificationCategory {self.name}>'
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "icon": self.icon
+        }
+
 # Bảng chính chứa các thông báo gửi đến người dùng
 class Notification(db.Model):
     __tablename__ = 'notification'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255), nullable=False)
-    message = db.Column(db.Text, nullable=False)
+    title = db.Column(db.String(255), nullable=False)   # Tiêu đề thư (Subject)
+    message = db.Column(db.Text, nullable=False)        # Nội dung thư (Body)
     is_read = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    link_to = db.Column(db.String(255), nullable=True) # URL để điều hướng khi click
+    link_to = db.Column(db.String(255), nullable=True)
 
-    # Khóa ngoại
-    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False) # Ai là người nhận
+    # [NEW] Người gửi (Nullable = True nghĩa là Hệ thống gửi)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    
+    # [NEW] Loại tin nhắn để FE tô màu: 'SYSTEM', 'MANAGER', 'NORMAL'
+    msg_type = db.Column(db.String(20), default='NORMAL')
+
+    # gim
+    is_pinned = db.Column(db.Boolean, default=False, nullable=False)
+
+    # Khóa ngoại người nhận
+    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('notification_category.id'), nullable=False)
 
-    # Mối quan hệ
-    recipient = db.relationship('User', backref='notifications')
+    # Quan hệ
+    recipient = db.relationship('User', foreign_keys=[recipient_id], backref='notifications_received')
+    sender = db.relationship('User', foreign_keys=[sender_id], backref='notifications_sent')
 
+    def to_dict(self):
+        # Logic hiển thị tên người gửi
+        sender_name = "Hệ thống"
+        if self.msg_type == 'MANAGER':
+            sender_name = f"Quản lý: {self.sender.full_name}" if self.sender else "Quản lý"
+        elif self.msg_type == 'NORMAL' and self.sender:
+            sender_name = self.sender.full_name
+
+        return {
+            "id": self.id,
+            "title": self.title,
+            "message": self.message,
+            "is_read": self.is_read,
+            "created_at": self.created_at.isoformat() + 'Z',
+            "link_to": self.link_to,
+            "category": self.category.name if self.category else "General",
+            "msg_type": self.msg_type, # Quan trọng để tô màu
+            "sender_name": sender_name,
+            "sender_avatar": self.sender.avatar_url if self.sender else None, 
+            "recipient_name": self.recipient.full_name if self.recipient else "Unknown"
+        }
+        
     def __repr__(self):
         return f'<Notification for User ID {self.recipient_id}>'

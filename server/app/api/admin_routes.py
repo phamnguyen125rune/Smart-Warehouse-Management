@@ -1,6 +1,8 @@
 from flask import Blueprint, request, jsonify
 from app.utils import manager_required
 from app.services.admin_service import AdminService
+from app.extensions import db
+from app.models import AuditLog, User
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -14,6 +16,26 @@ def get_users():
         "full_name": u.full_name,
         "role": u.role.name
     } for u in users])
+
+@admin_bp.route('/audit-logs', methods=['GET'])
+@manager_required()
+def get_audit_logs():
+    """Lấy lịch sử hoạt động của hệ thống"""
+    # Lấy 50 hành động mới nhất
+    logs = AuditLog.query.order_by(AuditLog.timestamp.desc()).limit(50).all()
+    
+    result = []
+    for log in logs:
+        result.append({
+            "id": log.id,
+            "actor_name": log.actor.full_name if log.actor else "Unknown",
+            "actor_id": log.actor.employee_id if log.actor else "",
+            "action": log.action, # Ví dụ: UPDATE_PROFILE
+            "details": log.details, # Chi tiết cũ -> mới
+            "timestamp": log.timestamp.isoformat() + 'Z'
+        })
+    
+    return jsonify(result), 200
 
 @admin_bp.route('/users/register', methods=['POST'])
 @manager_required()

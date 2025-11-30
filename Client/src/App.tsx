@@ -23,7 +23,8 @@ import Inventorypage from "./pages/Dashboard/InventoryPage"
 import CreateExportSlipPage from './pages/Management/CreateExportSlipPage';
 import ManageUsersPage from "./pages/Management/ManageUsersPage";
 import ProtectedRoute from './components/common/ProtectedRoute';
-
+import MailboxPage from "./components/mailbox/MailboxPage";
+import AuditLogPage from "./pages/Management/AuditLogPage";
 
 export default function App() {
   return (
@@ -31,42 +32,45 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <Routes>
-          {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
-            <Route index path="/" element={<Home />} />
-            
-            <Route index path="/inventorypage" element={<Inventorypage />} />
+          <Route element={<ProtectedRoute />}>
+            {/* Dashboard Layout */}
+            <Route element={<AppLayout />}>
+              <Route index path="/" element={<Home />} />
 
-            {/* Management Layout */}
-            <Route element={<ProtectedRoute allowedRoles={['manager']} />}>
-              <Route path="/receipt" element={<ProductReceipt />} />
-              <Route path="/export" element={<CreateExportSlipPage />} />
-              <Route path="/manage-users" element={<ManageUsersPage />} />
+              <Route index path="/inventorypage" element={<Inventorypage />} />
+
+              {/* Management Layout */}
+              <Route element={<ProtectedRoute allowedRoles={['manager']} />}>
+                <Route path="/receipt" element={<ProductReceipt />} />
+                <Route path="/export" element={<CreateExportSlipPage />} />
+                <Route path="/manage-users" element={<ManageUsersPage />} />
+                <Route path="/audit-logs" element={<AuditLogPage />} />
+              </Route>
+              {/* Others Page */}
+              <Route path="/profile" element={<UserProfiles />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/blank" element={<Blank />} />
+
+              {/* Forms */}
+              <Route path="/form-elements" element={<FormElements />} />
+              <Route path="/mailboxpage" element={<MailboxPage />} />
+
+              {/* Tables */}
+              <Route path="/basic-tables" element={<BasicTables />} />
+
+              {/* Ui Elements */}
+              <Route path="/alerts" element={<Alerts />} />
+              <Route path="/avatars" element={<Avatars />} />
+              <Route path="/badge" element={<Badges />} />
+              <Route path="/buttons" element={<Buttons />} />
+              <Route path="/images" element={<Images />} />
+              <Route path="/videos" element={<Videos />} />
+
+              {/* Charts */}
+              <Route path="/line-chart" element={<LineChart />} />
+              <Route path="/bar-chart" element={<BarChart />} />
             </Route>
-            {/* Others Page */}
-            <Route path="/profile" element={<UserProfiles />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/blank" element={<Blank />} />
-
-            {/* Forms */}
-            <Route path="/form-elements" element={<FormElements />} />
-
-            {/* Tables */}
-            <Route path="/basic-tables" element={<BasicTables />} />
-
-            {/* Ui Elements */}
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/avatars" element={<Avatars />} />
-            <Route path="/badge" element={<Badges />} />
-            <Route path="/buttons" element={<Buttons />} />
-            <Route path="/images" element={<Images />} />
-            <Route path="/videos" element={<Videos />} />
-
-            {/* Charts */}
-            <Route path="/line-chart" element={<LineChart />} />
-            <Route path="/bar-chart" element={<BarChart />} />
           </Route>
-
           {/* Auth Layout */}
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />

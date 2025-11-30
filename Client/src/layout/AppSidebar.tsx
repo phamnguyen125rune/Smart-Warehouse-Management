@@ -41,6 +41,7 @@ const navItems: NavItem[] = [
       { name: "Nhập kho", path: "/receipt", pro: false },
       { name: "Xuất kho", path: "/export", pro: false },
       { name: "Nhân viên", path: "/manage-users", pro: false },
+      { name: "Nhật kí hệ thống", path: "/audit-logs", pro: false}
     ],
   },
   {
@@ -57,6 +58,11 @@ const navItems: NavItem[] = [
     name: "Forms",
     icon: <ListIcon />,
     subItems: [{ name: "Form Elements", path: "/form-elements", pro: false }],
+  },
+  {
+    name: "Thư",
+    icon: <ListIcon />,
+    path: "/mailboxpage",
   },
   {
     name: "Tables",
