@@ -31,3 +31,6 @@ logs/
 
 # Coverage
 coverage/
+
+server/ocr_models/
+server/final_model/

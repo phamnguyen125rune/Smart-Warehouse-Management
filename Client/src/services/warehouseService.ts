@@ -3,7 +3,9 @@ import {
   Product, 
   CreateExportSlipPayload, 
   CreateImportSlipPayload, 
-  ApiResponse 
+  ApiResponse,
+  SlipSummary,
+  SlipDetail
 } from '../types/warehouse.types';
 
 export const warehouseService = {
@@ -34,5 +36,13 @@ export const warehouseService = {
   
   updateProduct: async (id: number, data: any): Promise<ApiResponse<Product>> => {
     return axiosClient.put(`/v1/products/${id}`, data) as Promise<ApiResponse<Product>>;
+  },
+
+  getSlips: async (): Promise<ApiResponse<SlipSummary[]>> => {
+    return axiosClient.get('/v1/slips') as Promise<ApiResponse<SlipSummary[]>>;
+  },
+
+  getSlipDetail: async (type: string, id: number): Promise<ApiResponse<SlipDetail>> => {
+    return axiosClient.get(`/v1/slips/${type}/${id}`) as Promise<ApiResponse<SlipDetail>>;
   }
 };

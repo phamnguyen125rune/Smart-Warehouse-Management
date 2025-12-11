@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { Toaster } from 'react-hot-toast';
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -25,6 +26,8 @@ import ManageUsersPage from "./pages/Management/ManageUsersPage";
 import ProtectedRoute from './components/common/ProtectedRoute';
 import MailboxPage from "./components/mailbox/MailboxPage";
 import AuditLogPage from "./pages/Management/AuditLogPage";
+import SlipsPage from "./pages/Management/SlipsPage";
+import SlipDetailPage from "./pages/Management/SlipDetailPage";
 
 export default function App() {
   return (
@@ -38,7 +41,8 @@ export default function App() {
               <Route index path="/" element={<Home />} />
 
               <Route index path="/inventorypage" element={<Inventorypage />} />
-
+              <Route path="/slips" element={<SlipsPage />} />
+              <Route path="/slips/:type/:id" element={<SlipDetailPage />} />              
               {/* Management Layout */}
               <Route element={<ProtectedRoute allowedRoles={['manager']} />}>
                 <Route path="/receipt" element={<ProductReceipt />} />
@@ -79,6 +83,25 @@ export default function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
+      <Toaster
+        position="bottom-right"
+        reverseOrder={false}
+        toastOptions={{
+          // Tùy chỉnh mặc định cho đẹp
+          duration: 4000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+          success: {
+            duration: 3000,
+            iconTheme: {
+              primary: 'green',
+              secondary: 'black',
+            },
+          },
+        }}
+      />
     </>
   );
 }

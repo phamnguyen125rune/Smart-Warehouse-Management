@@ -18,13 +18,13 @@ export interface Product {
   description: string | null;
   quantity_in_stock: number;
   
-  // [UPDATED] Giá chuẩn/Giá niêm yết (Thay thế last_import_price)
+  // Giá chuẩn/Giá niêm yết
   standard_price: number; 
 }
 
 // --- 3. NHẬP KHO (IMPORT SLIP) ---
 
-// Trạng thái của dòng nhập liệu (Dùng cho Smart Table)
+// Trạng thái của dòng nhập liệu
 export type ItemStatus = 'AUTO' | 'SUGGESTION' | 'NEW' | 'CONFIRMED';
 
 // Item cơ bản (Dùng để gửi lên Backend)
@@ -34,7 +34,7 @@ export interface ImportSlipItem {
   unitPrice: number;
   amount: number;
   // Optional: gửi kèm cờ này để backend cập nhật giá chuẩn
-  update_price?: boolean; 
+  updatePrice?: boolean; 
 }
 
 // Item mở rộng cho UI (Kế thừa Item cơ bản + thêm Metadata xử lý giao diện)
@@ -49,11 +49,11 @@ export interface ImportSlipItemUI extends ImportSlipItem {
 
   // Metadata trạng thái
   confidence: number;
-  status: ItemStatus; // 'AUTO', 'NEW', 'SUGGESTION', 'CONFIRMED'
+  status: ItemStatus; 
   isUserEdited: boolean;
 
-  // Checkbox trên UI
-  updatePrice: boolean; 
+  // Cờ báo hiệu dòng này cần kiểm tra kỹ (do logic toán sai)
+  needsManualCheck?: boolean; 
 }
 
 // Payload gửi lên API tạo phiếu nhập (POST /import-slips)
@@ -61,6 +61,12 @@ export interface CreateImportSlipPayload {
   code?: string; 
   invoice_total: number;
   items: ImportSlipItem[];
+}
+
+// Interface cho phản hồi từ API OCR (Trả về cả items và raw_text)
+export interface OCRResponse {
+    items: ImportSlipItemUI[];
+    raw_text: string;
 }
 
 // --- 4. XUẤT KHO (EXPORT SLIP) ---
@@ -81,13 +87,36 @@ export interface CreateExportSlipPayload {
   items: {
     product_id: number;
     quantity: number;
-    export_price?: number; // Giá xuất (thường lấy từ standard_price)
+    export_price?: number; 
   }[];
 }
 
 // --- 5. OCR ---
 
-// Response của API OCR upload
 export interface OcrResponseData {
   raw_text: string;
+}
+
+// --- 6. Xem thông tin phiếu nhập, xuất ---
+
+export interface SlipSummary {
+  id: number;
+  code: string;
+  type: 'IMPORT' | 'EXPORT';
+  created_at: string;
+  total_amount: number;
+  item_count: number;
+  note: string;
+}
+
+export interface SlipDetailItem {
+  product_name: string;
+  sku: string;
+  quantity: number;
+  unit_price: number;
+  amount: number;
+}
+
+export interface SlipDetail extends SlipSummary {
+  items: SlipDetailItem[];
 }

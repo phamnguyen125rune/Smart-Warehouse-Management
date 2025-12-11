@@ -14,6 +14,7 @@ export const authService = {
     return axiosClient.get<any, UserProfile>('/auth/profile/me');
   },
 
+
   updateProfile: (data: Partial<UserProfile>) => {
     return axiosClient.put('/auth/profile/me', data);
   },

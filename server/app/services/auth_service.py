@@ -38,7 +38,7 @@ class AuthService:
                 "email": user.email,
                 "avatar_url": user.avatar_url
             }
-            return create_access_token(identity=user.id, additional_claims=claims)
+            return create_access_token(identity=str(user.id), additional_claims=claims)
         return None
 
     @staticmethod

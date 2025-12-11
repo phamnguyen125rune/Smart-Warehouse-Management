@@ -8,14 +8,6 @@ from app.services.notification_service import NotificationService
 
 app = create_app()
 
-@app.cli.command('seed')
-def seed_command():
-    """Tạo dữ liệu ban đầu cho CSDL."""
-    with app.app_context():
-        db.create_all()
-        print("Database tables ensured.")
-    seed_data()
-
 # Hàm gửi thông báo khởi động
 def send_startup_notification():
     with app.app_context():
@@ -24,6 +16,22 @@ def send_startup_notification():
             title="Server",
             message="Hệ thống đã hoàn tất bảo trì và hoạt động trở lại. Chúc các bạn làm việc hiệu quả!"
         )
+
+@app.cli.command('seed')
+def seed_command():
+    """Tạo dữ liệu ban đầu cho CSDL."""
+    # [QUAN TRỌNG] Phải bọc toàn bộ logic DB trong app_context
+    with app.app_context():
+        print("Đang kiểm tra và tạo bảng (db.create_all)...")
+        db.create_all()
+        print("Database tables ensured.")
+        
+        # Gọi hàm seed_data NGAY TRONG khối này
+        try:
+            seed_data()
+            print("✔ Seed dữ liệu thành công!")
+        except Exception as e:
+            print(f"❌ Lỗi khi seed dữ liệu: {e}")
 
 if __name__ == '__main__':
     # Nhờ AI.

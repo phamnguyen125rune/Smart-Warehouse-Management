@@ -63,6 +63,43 @@ def reset_pass(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@admin_bp.route('/users/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
+@manager_required()
+def handle_user_by_id(user_id):
+    if request.method == 'GET':
+        try:
+            user = AdminService.get_user_by_id(user_id)
+            return jsonify({
+                "id": user.id,
+                "employee_id": user.employee_id,
+                "full_name": user.full_name,
+                "email": user.email,
+                "role": user.role.name,
+                "is_active": user.is_active
+            }), 200
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 404
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+    
+    elif request.method == 'PUT':
+        try:
+            AdminService.update_user(user_id, request.get_json())
+            return jsonify({"message": "Cập nhật user thành công"}), 200
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 404
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    elif request.method == 'DELETE':
+        try:
+            AdminService.delete_user(user_id)
+            return jsonify({"message": "Xóa user thành công"}), 200
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 404
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
 @admin_bp.route('/roles', methods=['GET'])
 @manager_required()
 def get_roles():

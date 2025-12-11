@@ -27,78 +27,90 @@ export default function CreateExportSlipPage() {
 
   // 1. Thêm dòng trống
   const handleAddRow = () => {
-      setSlipItems(prev => [...prev, {
-          tempId: Date.now(),
-          productId: 0, // 0 nghĩa là chưa chọn
-          name: '',
-          quantity: 0,
-          currentStock: 0
-      }]);
+    setSlipItems(prev => [...prev, {
+      tempId: Date.now(),
+      productId: 0, // 0 nghĩa là chưa chọn
+      name: '',
+      quantity: 0,
+      currentStock: 0
+    }]);
   };
 
   // 2. Chọn sản phẩm cho dòng
   const handleSelectItem = (tempId: number, product: Product) => {
-      // Check trùng: Nếu sp đã có trong list thì cộng dồn số lượng hoặc báo lỗi (ở đây mình báo lỗi cho đơn giản)
-      const exists = slipItems.find(i => i.productId === product.id);
-      if (exists) {
-          alert("Sản phẩm này đã có trong danh sách!");
-          return;
-      }
+    // Check trùng: Nếu sp đã có trong list thì cộng dồn số lượng hoặc báo lỗi (ở đây mình báo lỗi cho đơn giản)
+    const exists = slipItems.find(i => i.productId === product.id);
+    if (exists) {
+      alert("Sản phẩm này đã có trong danh sách!");
+      return;
+    }
 
-      setSlipItems(prev => prev.map(item => {
-          // Tìm dòng đang thao tác (dựa vào tempId hoặc productId nếu có)
-          const key = item.productId || item.tempId;
-          if (key !== tempId) return item;
+    setSlipItems(prev => prev.map(item => {
+      // Tìm dòng đang thao tác (dựa vào tempId hoặc productId nếu có)
+      const key = item.productId || item.tempId;
+      if (key !== tempId) return item;
 
-          return {
-              ...item,
-              productId: product.id,
-              name: product.name,
-              currentStock: product.quantity_in_stock,
-              quantity: 1, // Reset về 1 khi chọn mới
-              tempId: undefined // Xóa tempId vì đã có productId thật
-          };
-      }));
+      return {
+        ...item,
+        productId: product.id,
+        name: product.name,
+        currentStock: product.quantity_in_stock,
+        quantity: 1, // Reset về 1 khi chọn mới
+        tempId: undefined // Xóa tempId vì đã có productId thật
+      };
+    }));
   };
 
   // 3. Cập nhật số lượng
   const handleUpdateItem = (productId: number, data: Partial<ExportSlipUIItem>) => {
-      setSlipItems(prev => prev.map(item => 
-          item.productId === productId ? { ...item, ...data } : item
-      ));
+    setSlipItems(prev => prev.map(item =>
+      item.productId === productId ? { ...item, ...data } : item
+    ));
   };
 
   // 4. Xóa dòng
   const handleRemoveItem = (id: number) => {
-      setSlipItems(prev => prev.filter(item => (item.productId || item.tempId) !== id));
+    setSlipItems(prev => prev.filter(item => (item.productId || item.tempId) !== id));
   };
 
   // 5. Lưu phiếu
   const handleCreateSlip = async () => {
-    // Validate: Loại bỏ dòng trống & Check tồn kho
+    // Validate dòng trống
     const validItems = slipItems.filter(i => i.productId !== 0);
     if (validItems.length === 0) {
-        setError('Danh sách xuất kho trống.');
-        return;
+      setError('Danh sách xuất kho trống.');
+      return;
     }
 
-    // Check tồn kho lần cuối
+    // Validate tồn kho
     const invalidStock = validItems.find(i => i.quantity > i.currentStock);
     if (invalidStock) {
-        setError(`Sản phẩm "${invalidStock.name}" xuất quá tồn kho!`);
-        return;
+      setError(`Sản phẩm "${invalidStock.name}" xuất quá tồn kho!`);
+      return;
     }
 
     setIsLoading(true);
     setError(null);
 
     try {
+      // [FIX] Sinh mã phiếu tự động theo thời gian
+      const generatedCode = `EXP-${Date.now()}`;
+
       const payload: CreateExportSlipPayload = {
-        reason: 'Xuất kho',
-        items: validItems.map(item => ({
-          product_id: item.productId,
-          quantity: item.quantity
-        })),
+        code: generatedCode, // [FIX 1] Thêm dòng này
+        reason: 'Xuất kho bán lẻ',
+        items: validItems.map(item => {
+          // [FIX 2] Tìm sản phẩm gốc để lấy giá bán (standard_price)
+          // Nếu không gửi giá, backend sẽ lưu là 0 -> Tổng tiền = 0
+          const originalProduct = allProducts.find(p => p.id === item.productId);
+
+          return {
+            product_id: item.productId,
+            quantity: item.quantity,
+            // Gửi giá xuất (lấy từ giá niêm yết hiện tại)
+            export_price: originalProduct ? originalProduct.standard_price : 0
+          };
+        }),
       };
 
       const result = await warehouseService.createExportSlip(payload);
@@ -127,24 +139,24 @@ export default function CreateExportSlipPage() {
 
       <div className="flex flex-col gap-6">
         <ComponentCard title="Danh sách xuất kho">
-            {/* Nếu list trống thì tự động thêm 1 dòng đầu tiên cho user đỡ phải bấm */}
-            {/* Tuy nhiên để nhất quán logic, ta hiển thị bảng rỗng với nút thêm */}
-            
-            <div className="flex justify-end gap-3 mb-4">
-                <Button variant="outline" size="sm" onClick={() => setSlipItems([])}>Làm mới</Button>
-                <Button size="sm" onClick={handleCreateSlip} disabled={isLoading}>
-                    {isLoading ? "Đang xử lý..." : "Xác nhận Xuất kho"}
-                </Button>
-            </div>
+          {/* Nếu list trống thì tự động thêm 1 dòng đầu tiên cho user đỡ phải bấm */}
+          {/* Tuy nhiên để nhất quán logic, ta hiển thị bảng rỗng với nút thêm */}
 
-            <OutputProducts 
-                items={slipItems}
-                allProducts={allProducts}
-                onUpdateItem={handleUpdateItem}
-                onRemoveItem={handleRemoveItem}
-                onAddRow={handleAddRow}
-                onSelectItem={handleSelectItem}
-            />
+          <div className="flex justify-end gap-3 mb-4">
+            <Button variant="outline" size="sm" onClick={() => setSlipItems([])}>Làm mới</Button>
+            <Button size="sm" onClick={handleCreateSlip} disabled={isLoading}>
+              {isLoading ? "Đang xử lý..." : "Xác nhận Xuất kho"}
+            </Button>
+          </div>
+
+          <OutputProducts
+            items={slipItems}
+            allProducts={allProducts}
+            onUpdateItem={handleUpdateItem}
+            onRemoveItem={handleRemoveItem}
+            onAddRow={handleAddRow}
+            onSelectItem={handleSelectItem}
+          />
         </ComponentCard>
       </div>
     </>

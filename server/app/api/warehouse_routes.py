@@ -66,7 +66,6 @@ def upload_and_process_invoice():
         try:
             file.save(image_path)
             
-            # [FIX] Gọi hàm process_ocr_upload mới viết trong Service
             # Hàm này đã bao gồm cả AI + Parsing + Smart Search
             smart_items = WarehouseService.process_ocr_upload(image_path)
             
@@ -111,3 +110,22 @@ def update_product(product_id):
     except Exception as e:
         print(f"Error updating: {e}")
         return jsonify({"success": False, "error": "Lỗi server"}), 500
+
+@warehouse_bp.route('/slips', methods=['GET'])
+def get_slips():
+    try:
+        data = WarehouseService.get_all_slips()
+        return jsonify({"success": True, "data": data}), 200
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@warehouse_bp.route('/slips/<string:slip_type>/<int:slip_id>', methods=['GET'])
+def get_slip_detail(slip_type, slip_id):
+    try:
+        # slip_type nhận vào: 'IMPORT' hoặc 'EXPORT'
+        data = WarehouseService.get_slip_detail(slip_type.upper(), slip_id)
+        return jsonify({"success": True, "data": data}), 200
+    except ValueError as ve:
+        return jsonify({"success": False, "error": str(ve)}), 404
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500

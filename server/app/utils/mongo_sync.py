@@ -2,6 +2,7 @@
 from pymongo import MongoClient, TEXT
 from app import create_app
 from app.models import Product
+from app.utils.text_utils import remove_vietnamese_tones
 
 # Cấu hình Mongo (Nên để trong config.py nhưng viết tạm ở đây)
 MONGO_URI = 'mongodb://localhost:27017/'
@@ -36,8 +37,8 @@ def sync_products_to_mongo():
                 "name": p.name,
                 "sku": p.sku,
                 # Lưu thêm dạng không dấu để tăng khả năng tìm kiếm
-                # (Bạn có thể dùng hàm remove_vietnamese_tones nếu muốn kỹ hơn)
-                "search_text": f"{p.name} {p.sku}" 
+                "name_no_tone": remove_vietnamese_tones(p.name),
+                "search_text": f"{p.name} {remove_vietnamese_tones(p.name)} {p.sku}"
             }
             mongo_docs.append(doc)
 

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Product } from "../../../types/warehouse.types";
+import { removeVietnameseTones } from "../../../utils/textUtils";
 
 interface ProductAutocompleteProps {
   products: Product[];
@@ -18,11 +19,13 @@ export default function ProductAutocomplete({ products, value, onSelect, placeho
   }, [value]);
 
   // Lọc sản phẩm theo tên hoặc SKU
-  const filtered = products.filter(p => 
-    p.name.toLowerCase().includes(inputValue.toLowerCase()) || 
-    (p.sku && p.sku.toLowerCase().includes(inputValue.toLowerCase()))
-  );
+  const filtered = products.filter(p => {
+      const term = removeVietnameseTones(inputValue);
+      const name = removeVietnameseTones(p.name);
+      const sku = removeVietnameseTones(p.sku || "");
 
+      return name.includes(term) || sku.includes(term);
+  });  
   useEffect(() => {
     function handleClickOutside(event: any) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {

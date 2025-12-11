@@ -17,10 +17,10 @@ export default function SignInForm() {
   // --- STATE CHO FORM ---
   const [employeeId, setEmployeeId] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // Nếu bạn dùng icon mắt
+  const [showPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   
-  // [FIX] Lấy thêm isAuthenticated từ Context
+  //  Lấy thêm isAuthenticated từ Context
   const { login: authLogin, isAuthenticated } = useAuth();
 
   // --- STATE CHO VIỆC TƯƠNG TÁC API ---
@@ -29,12 +29,12 @@ export default function SignInForm() {
 
   const navigate = useNavigate();
 
-  // [QUAN TRỌNG] useEffect này sẽ tự động chuyển hướng khi đăng nhập thành công
-  // Nó giải quyết triệt để vấn đề "kẹt ở trang login"
+  // useEffect này sẽ tự động chuyển hướng khi đăng nhập thành công
   useEffect(() => {
     if (isAuthenticated) {
       // replace: true để người dùng không bấm Back quay lại trang login được
-      navigate("/profile", { replace: true }); 
+      // chuyển hướng sau đăng nhập
+      navigate("/receipt", { replace: true }); 
     }
   }, [isAuthenticated, navigate]);
 

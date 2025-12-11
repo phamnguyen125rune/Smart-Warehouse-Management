@@ -34,4 +34,7 @@ def create_app(config_class=Config):
     from app.api.notification_routes import notification_bp
     app.register_blueprint(notification_bp, url_prefix='/api/notifications')
     
+    # 6. Dashboard
+    from app.api.dashboard_routes import dashboard_bp
+    app.register_blueprint(dashboard_bp, url_prefix='/api')
     return app

@@ -1,5 +1,6 @@
 from app.extensions import db
 from app.models import User, Role
+from app.services.notification_service import NotificationService
 
 class AdminService:
     @staticmethod
@@ -46,11 +47,43 @@ class AdminService:
         db.session.commit()
 
     @staticmethod
-    def deactivate_user(user_id):
+    def get_user_by_id(user_id):
         user = db.session.get(User, user_id)
-        if user:
-            user.is_active = False
-            db.session.commit()
+        if not user:
+            raise ValueError("User không tồn tại")
+        return user
+
+    @staticmethod
+    def update_user(user_id, data):
+        user = db.session.get(User, user_id)
+        if not user:
+            raise ValueError("User không tồn tại")
+
+        if 'full_name' in data:
+            user.full_name = data['full_name']
+        if 'email' in data:
+            user.email = data['email']
+        if 'role' in data:
+            role = Role.query.filter_by(name=data['role']).first()
+            if not role:
+                raise ValueError(f"Quyền '{data['role']}' không hợp lệ")
+            user.role_id = role.id
+        if 'is_active' in data:
+            user.is_active = data['is_active']
+        
+        db.session.commit()
+        return user
+
+    @staticmethod
+    def delete_user(user_id):
+        user = db.session.get(User, user_id)
+        if not user:
+            raise ValueError("User không tồn tại")
+        
+        # For a soft delete, set is_active to False
+        user.is_active = False
+        db.session.commit()
+        return user
 
     @staticmethod
     def get_all_roles():

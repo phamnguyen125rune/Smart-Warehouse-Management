@@ -1,8 +1,8 @@
-"""Re-init
+"""Initial migration on MySQL
 
-Revision ID: 9310a23be4b6
+Revision ID: a9c9da91295a
 Revises: 
-Create Date: 2025-12-01 03:17:13.312335
+Create Date: 2025-12-06 22:45:22.009603
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '9310a23be4b6'
+revision = 'a9c9da91295a'
 down_revision = None
 branch_labels = None
 depends_on = None
