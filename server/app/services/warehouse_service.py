@@ -1,3 +1,4 @@
+# server/app/services/warehouse_service.py
 import re
 from app.extensions import db
 from app.models import Product, ImportSlip, ImportSlipDetail, ExportSlip, ExportSlipDetail

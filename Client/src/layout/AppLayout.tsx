@@ -3,6 +3,8 @@ import { Outlet } from "react-router";
 import AppHeader from "./AppHeader";
 import Backdrop from "./Backdrop";
 import AppSidebar from "./AppSidebar";
+// Đã import sẵn
+import ChatWidget from "../components/ChatBot/ChatWidget";
 
 const LayoutContent: React.FC = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
@@ -23,6 +25,8 @@ const LayoutContent: React.FC = () => {
           <Outlet />
         </div>
       </div>
+
+      <ChatWidget />
     </div>
   );
 };

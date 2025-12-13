@@ -78,14 +78,14 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
             </svg>
           </button>
 
-          <Link to="/" className="lg:hidden">
+          <Link to="/" className="lg:hidden flex-shrink-0">
             <img
-              className="dark:hidden"
+              className="dark:hidden !w-96 !h-24 object-contain"
               src="./images/logo/logo.svg"
               alt="Logo"
             />
             <img
-              className="hidden dark:block"
+              className="hidden dark:block !w-96 !h-24 object-contain"
               src="./images/logo/logo-dark.svg"
               alt="Logo"
             />

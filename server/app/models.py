@@ -1,3 +1,4 @@
+# server/app/models.py
 from datetime import datetime
 from . import db, bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -29,6 +30,7 @@ class Product(db.Model):
     quantity_in_stock = db.Column(db.Integer, nullable=False, default=0)
 
     standard_price = db.Column(db.Float, default=0)
+    is_active = db.Column(db.Boolean, default=True)
     # Mối quan hệ với các chi tiết phiếu
     import_details = db.relationship('ImportSlipDetail', backref='product', lazy='dynamic')
     export_details = db.relationship('ExportSlipDetail', backref='product', lazy='dynamic')

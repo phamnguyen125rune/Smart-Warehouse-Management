@@ -37,4 +37,9 @@ def create_app(config_class=Config):
     # 6. Dashboard
     from app.api.dashboard_routes import dashboard_bp
     app.register_blueprint(dashboard_bp, url_prefix='/api')
+    
+    # 7. Đăng ký Chatbot Blueprint
+    from app.api.chat_routes import chat_bp
+    app.register_blueprint(chat_bp, url_prefix='/api/chat')
+    
     return app
