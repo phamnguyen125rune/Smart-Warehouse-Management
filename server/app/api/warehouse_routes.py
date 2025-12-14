@@ -111,6 +111,16 @@ def update_product(product_id):
         print(f"Error updating: {e}")
         return jsonify({"success": False, "error": "Lỗi server"}), 500
 
+@warehouse_bp.route('/products/<int:product_id>/toggle-active', methods=['PATCH'])
+def toggle_product_active(product_id):
+    try:
+        updated_product = WarehouseService.update_product(product_id, {'is_active': request.get_json().get('is_active')})
+        return jsonify({"success": True, "data": updated_product, "message": "Cập nhật trạng thái thành công"}), 200
+    except ValueError as ve:
+        return jsonify({"success": False, "error": str(ve)}), 400
+    except Exception as e:
+        return jsonify({"success": False, "error": "Lỗi server"}), 500
+
 @warehouse_bp.route('/slips', methods=['GET'])
 def get_slips():
     try:

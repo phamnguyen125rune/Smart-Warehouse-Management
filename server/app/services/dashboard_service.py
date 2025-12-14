@@ -12,8 +12,11 @@ class DashboardService:
             func.sum(Product.quantity_in_stock * Product.standard_price)
         ).scalar() or 0
 
-        # 2. Số lượng sản phẩm sắp hết hàng (Giả sử ngưỡng là 10)
-        low_stock_count = Product.query.filter(Product.quantity_in_stock <= 10).count()
+        # 2. Số lượng sản phẩm sắp hết hàng (chỉ tính sản phẩm đang bán)
+        low_stock_count = Product.query.filter(
+            Product.quantity_in_stock <= 10,
+            Product.is_active == True
+        ).count()
 
         # 3. Tổng số mặt hàng đang quản lý
         total_products = Product.query.count()
@@ -66,9 +69,10 @@ class DashboardService:
     
     @staticmethod
     def get_stock_alerts(limit=5, threshold=10):
-        # Lấy các sản phẩm có tồn kho thấp, sắp xếp tăng dần
+        # Lấy các sản phẩm có tồn kho thấp (chỉ sản phẩm đang bán)
         products = Product.query.filter(
-            Product.quantity_in_stock <= threshold
+            Product.quantity_in_stock <= threshold,
+            Product.is_active == True
         ).order_by(Product.quantity_in_stock.asc()).limit(limit).all()
 
         results = []

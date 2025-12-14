@@ -23,9 +23,13 @@ from transformers import LayoutLMv3ForTokenClassification, LayoutLMv3Processor
 from vietocr.tool.predictor import Predictor
 from vietocr.tool.config import Cfg
 
-# Tắt log rác
+# Tắt log rác và OneDNN để tránh xung đột
 logging.getLogger("ppocr").setLevel(logging.ERROR)
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+os.environ["FLAGS_use_mkldnn"] = "False"
+os.environ["FLAGS_use_cuda"] = "False"
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+os.environ["FLAGS_enable_parallel_graph"] = "False"
 
 # Định nghĩa các Label mapping cứng
 HEADER_MAP = {

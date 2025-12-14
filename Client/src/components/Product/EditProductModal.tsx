@@ -18,7 +18,8 @@ export default function EditProductModal({ isOpen, onClose, product, onSuccess }
     name: "",
     sku: "",
     description: "",
-    standard_price: 0
+    standard_price: 0,
+    is_active: true
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,14 +31,16 @@ export default function EditProductModal({ isOpen, onClose, product, onSuccess }
         name: product.name,
         sku: product.sku || "",
         description: product.description || "",
-        standard_price: product.standard_price || 0
+        standard_price: product.standard_price || 0,
+        is_active: product.is_active
       });
       setError(null);
     }
   }, [product, isOpen]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,6 +99,20 @@ export default function EditProductModal({ isOpen, onClose, product, onSuccess }
           <div>
             <Label>Mô tả</Label>
             <Input name="description" value={formData.description} onChange={handleChange} />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="is_active"
+              name="is_active"
+              checked={formData.is_active}
+              onChange={handleChange}
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <Label htmlFor="is_active" className="text-sm font-medium text-gray-900 dark:text-gray-300">
+              Đang bán
+            </Label>
           </div>
 
           <div className="flex justify-end gap-3 mt-6">

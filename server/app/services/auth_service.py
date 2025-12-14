@@ -86,7 +86,7 @@ class AuthService:
             "full_name": user.full_name,
             "avatar_url": user.avatar_url
         }
-        return create_access_token(identity=user.id, additional_claims=claims)
+        return create_access_token(identity=str(user.id), additional_claims=claims)
 
     @staticmethod
     def update_profile(user_id, data, login_type):

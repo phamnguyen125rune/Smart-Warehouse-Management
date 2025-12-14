@@ -44,5 +44,9 @@ export const warehouseService = {
 
   getSlipDetail: async (type: string, id: number): Promise<ApiResponse<SlipDetail>> => {
     return axiosClient.get(`/v1/slips/${type}/${id}`) as Promise<ApiResponse<SlipDetail>>;
+  },
+
+  toggleProductActive: async (id: number, isActive: boolean): Promise<ApiResponse<Product>> => {
+    return axiosClient.patch(`/v1/products/${id}/toggle-active`, { is_active: isActive }) as Promise<ApiResponse<Product>>;
   }
 };

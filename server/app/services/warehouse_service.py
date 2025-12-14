@@ -15,7 +15,9 @@ class WarehouseService:
             'name': p.name,
             'sku': p.sku,
             'description': p.description,
-            'quantity_in_stock': p.quantity_in_stock
+            'quantity_in_stock': p.quantity_in_stock,
+            'standard_price': p.standard_price,
+            'is_active': p.is_active
         } for p in products]
 
     @staticmethod
@@ -77,6 +79,8 @@ class WarehouseService:
             
             if not product:
                 raise ValueError(f"Sản phẩm ID {item['product_id']} không tồn tại.")
+            if not product.is_active:
+                raise ValueError(f"Sản phẩm '{product.name}' đã ngừng bán.")
             if product.quantity_in_stock < qty_needed:
                 raise ValueError(f"Sản phẩm '{product.name}' không đủ tồn kho (Còn: {product.quantity_in_stock}).")
 
@@ -88,6 +92,10 @@ class WarehouseService:
             for item in data['items']:
                 product = db.session.get(Product, item['product_id'])
                 qty = int(item['quantity'])
+                
+                # Kiểm tra lại trạng thái trước khi xuất
+                if not product.is_active:
+                    raise ValueError(f"Sản phẩm '{product.name}' đã ngừng bán.")
                 
                 product.quantity_in_stock -= qty
                 
@@ -267,7 +275,7 @@ class WarehouseService:
             db.session.add(new_product)
             db.session.commit()
             SearchService.add_product(new_product)
-            return {"id": new_product.id, "name": new_product.name, "sku": new_product.sku, "description": new_product.description, "quantity_in_stock": new_product.quantity_in_stock, "standard_price": new_product.standard_price}
+            return {"id": new_product.id, "name": new_product.name, "sku": new_product.sku, "description": new_product.description, "quantity_in_stock": new_product.quantity_in_stock, "standard_price": new_product.standard_price, "is_active": new_product.is_active}
         except Exception as e:
             db.session.rollback()
             raise e
@@ -289,11 +297,12 @@ class WarehouseService:
         if 'standard_price' in data:
             try: product.standard_price = float(data['standard_price'])
             except: pass
+        if 'is_active' in data: product.is_active = bool(data['is_active'])
 
         try:
             db.session.commit()
             SearchService.update_product_in_mongo(product)
-            return {"id": product.id, "name": product.name, "sku": product.sku, "description": product.description, "quantity_in_stock": product.quantity_in_stock, "standard_price": product.standard_price}
+            return {"id": product.id, "name": product.name, "sku": product.sku, "description": product.description, "quantity_in_stock": product.quantity_in_stock, "standard_price": product.standard_price, "is_active": product.is_active}
         except Exception as e:
             db.session.rollback()
             raise e

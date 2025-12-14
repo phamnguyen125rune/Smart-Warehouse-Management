@@ -2,31 +2,30 @@
 import requests
 import json
 import time
+import os
 from sqlalchemy import text
 from app.extensions import db
 
 # --- CẤU HÌNH ---
 # Dán Key mới của bạn vào đây
-GOOGLE_API_KEY = "AIzaSyCzysGzCUnt4OrLyrARY8xx734pEnsZbmM"
+GOOGLE_API_KEY = "AIzaSyDg-b2hCTdH7ppvPMJRCl6cTXAO33Pb8g4"
 
 class ChatbotService:
-    # 1. Thông tin tĩnh (AI sẽ dùng cái này để trả lời các câu hỏi chung)
-    WAREHOUSE_INFO = """
-    THÔNG TIN CƠ BẢN:
-    - Tên hệ thống: Smart Warehouse Management (SWM).
-    - Địa chỉ kho: 475A Điện Biên Phủ, phường Thạnh Mỹ Tây, TP.HCM.
-    - Hotline: 1900 123 456 (Hỗ trợ 24/7).
-    
-    CHỨC NĂNG CỦA WEBSITE (Khi user hỏi về tính năng, hãy trả lời dựa trên ý này):
-    1. Nhập kho bằng AI (OCR): Chỉ cần upload ảnh hóa đơn, hệ thống tự điền tên hàng, số lượng, giá tiền. Đây là tính năng xịn nhất.
-    2. Chatbot thông minh: Giúp tra cứu tồn kho nhanh mà không cần vào danh sách lọc.
-    3. Báo cáo: Tự động vẽ biểu đồ doanh thu, cảnh báo hàng sắp hết.
-    
-    CÁC CÂU HỎI THƯỜNG GẶP (FAQ):
-    - Hỏi: "Làm sao để nhập kho?" -> Trả lời: "Bạn vào menu 'Nhập kho', chọn 'Upload hóa đơn' rồi tải ảnh lên là xong."
-    - Hỏi: "Quên mật khẩu thì sao?" -> Trả lời: "Hãy liên hệ Admin qua email support@swm.vn để được cấp lại."
-    - Hỏi: "Ai phát triển web này?" -> Trả lời: "Web được phát triển bởi nhóm 4 con cá."
-    """
+    # 1. Thông tin tĩnh (AI sẽ dùng cái này để trả lời các câu hỏi chung) 
+    @staticmethod
+    def get_warehouse_info():
+        try:
+            # Đường dẫn đến file knowledge.txt (nằm cùng cấp với thư mục app hoặc trong app)
+            # Giả sử file nằm tại server/app/knowledge.txt
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # Lấy đường dẫn server/app
+            file_path = os.path.join(base_dir, 'knowledge.txt')
+            
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return f.read()
+        except Exception as e:
+            print(f" [Warning] Không đọc được file knowledge.txt: {e}")
+            # Nội dung dự phòng nếu lỡ xóa mất file
+            return "Hệ thống quản lý kho thông minh SWM."
 
     # 2. Cấu trúc dữ liệu (AI sẽ dùng cái này để viết SQL)
     DB_SCHEMA = """
@@ -42,8 +41,8 @@ class ChatbotService:
     # 2. Bản Lite 2.0 nhanh nhẹ
     # 3. Bản Pro cũ (Backup cuối cùng)
     AVAILABLE_MODELS = [
-        "gemini-2.0-flash",          # Ưu tiên 1: Bản Flash 2.0 chuẩn (Thường ít lỗi hơn Lite)
-        "gemini-flash-latest",       # Ưu tiên 2: Bản Flash mới nhất (Alias)
+        "gemini-2.5-flash-preview-09-2025",          # Ưu tiên 1: Bản Flash 2.0 chuẩn (Thường ít lỗi hơn Lite)
+        "gemini-2.5-flash-lite",       # Ưu tiên 2: Bản Flash mới nhất (Alias)
         "gemini-2.0-flash-lite-preview-02-05" # Ưu tiên 3: Bản Lite (Dự phòng)
     ]
 
@@ -93,8 +92,9 @@ class ChatbotService:
     @staticmethod
     def ask_inventory(user_question):
         try:
+            warehouse_info = ChatbotService.get_warehouse_info()
             prompt = f"""
-            Info: {ChatbotService.WAREHOUSE_INFO}
+            Info: {warehouse_info}
             Schema: {ChatbotService.DB_SCHEMA}
             User Question: "{user_question}"
             

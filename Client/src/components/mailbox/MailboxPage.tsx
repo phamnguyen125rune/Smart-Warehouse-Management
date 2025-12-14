@@ -201,13 +201,13 @@ export default function MailboxPage() {
                                             {/* [FIX] Hiển thị displayName */}
                                             <span className={`text-sm truncate max-w-[140px] ${
                                                 !isRead && filterType !== 'SENT' ? 'font-bold text-gray-900 dark:text-white' : 'font-medium text-gray-600 dark:text-gray-400'
-                                            } ${mail.msg_type === 'SYSTEM' ? '!text-red-600' : ''}`}>
+                                            } ${mail.msg_type === 'SYSTEM' ? '!text-slate-600 dark:!text-slate-400' : ''}`}>
                                                 {displayName}
                                             </span>
 
-                                            {/* Badge (Giữ nguyên) */}
+                                            {/* Badge */}
                                             {mail.msg_type === "SYSTEM" && (
-                                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-600 border border-red-200 font-bold">
+                                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200 font-medium dark:bg-slate-800 dark:text-slate-400 dark:border-slate-600">
                                                     HỆ THỐNG
                                                 </span>
                                             )}
@@ -275,7 +275,7 @@ export default function MailboxPage() {
                     <div className="flex items-center gap-4 overflow-hidden">
                         {/* Avatar */}
                         <div className={`h-12 w-12 rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold text-white
-                            ${selectedMail.msg_type === 'SYSTEM' ? 'bg-red-500' : (selectedMail.msg_type === 'MANAGER' ? 'bg-yellow-500' : 'bg-blue-500')}
+                            ${selectedMail.msg_type === 'SYSTEM' ? 'bg-slate-500' : (selectedMail.msg_type === 'MANAGER' ? 'bg-amber-500' : 'bg-blue-500')}
                         `}>
                             {filterType === 'SENT' ? selectedMail.recipient_name.charAt(0) : selectedMail.sender_name.charAt(0)}
                         </div>
@@ -315,7 +315,7 @@ export default function MailboxPage() {
                         </button>
 
                         {selectedMail.msg_type === 'SYSTEM' && (
-                             <span className="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold uppercase tracking-wide">
+                             <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-medium uppercase tracking-wide border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-600">
                                  Hệ thống
                              </span>
                         )}

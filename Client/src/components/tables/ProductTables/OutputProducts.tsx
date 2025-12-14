@@ -25,12 +25,12 @@ export default function OutputProducts({
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] max-h-[500px] overflow-y-auto custom-scrollbar">
       <div className="max-w-full overflow-x-visible pb-4"> 
         <Table>
-          <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] sticky top-0 bg-gray-50 z-10">
+          <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] sticky top-0 bg-gray-50 dark:bg-gray-800 z-10">
             <TableRow>
-              <TableCell isHeader className="px-4 py-3 min-w-[300px]">TÊN SẢN PHẨM</TableCell>
-              <TableCell isHeader className="px-4 py-3 min-w-[100px] text-center">TỒN KHO</TableCell>
-              <TableCell isHeader className="px-4 py-3 min-w-[120px] text-center">SL XUẤT</TableCell>
-              <TableCell isHeader className="px-4 py-3 w-[50px]"> </TableCell>
+              <TableCell isHeader className="px-4 py-3 min-w-[300px] text-gray-700 dark:text-gray-300 font-medium">TÊN SẢN PHẨM</TableCell>
+              <TableCell isHeader className="px-4 py-3 min-w-[100px] text-center text-gray-700 dark:text-gray-300 font-medium">TỒN KHO</TableCell>
+              <TableCell isHeader className="px-4 py-3 min-w-[120px] text-center text-gray-700 dark:text-gray-300 font-medium">SL XUẤT</TableCell>
+              <TableCell isHeader className="px-4 py-3 w-[50px] text-gray-700 dark:text-gray-300 font-medium"> </TableCell>
             </TableRow>
           </TableHeader>
 

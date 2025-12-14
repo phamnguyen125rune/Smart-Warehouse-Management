@@ -14,12 +14,16 @@ export default function CreateExportSlipPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load sản phẩm
+  // Load sản phẩm (chỉ lấy sản phẩm đang bán)
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const result = await warehouseService.getProducts();
-        if (result.success) setAllProducts(result.data);
+        if (result.success) {
+          // Lọc chỉ lấy sản phẩm đang bán
+          const activeProducts = result.data.filter(product => product.is_active);
+          setAllProducts(activeProducts);
+        }
       } catch (err: any) { console.error(err); }
     };
     fetchProducts();
@@ -117,9 +121,12 @@ export default function CreateExportSlipPage() {
       if (result && result.success) {
         alert('Xuất kho thành công!');
         setSlipItems([]);
-        // Reload lại tồn kho mới
+        // Reload lại tồn kho mới (chỉ lấy sản phẩm đang bán)
         const productRes = await warehouseService.getProducts();
-        if (productRes.success) setAllProducts(productRes.data);
+        if (productRes.success) {
+          const activeProducts = productRes.data.filter(product => product.is_active);
+          setAllProducts(activeProducts);
+        }
       } else {
         setError(result?.error || 'Lỗi tạo phiếu.');
       }

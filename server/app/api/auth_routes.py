@@ -39,7 +39,7 @@ def get_profile():
     """
     Lấy thông tin chi tiết của người dùng hiện tại.
     """
-    current_user_id = get_jwt_identity()
+    current_user_id = int(get_jwt_identity())
     user = db.session.get(User, current_user_id)
 
     if not user:
@@ -51,7 +51,7 @@ def get_profile():
 @jwt_required()
 def update_profile():
     try:
-        user_id = get_jwt_identity()
+        user_id = int(get_jwt_identity())
         claims = get_jwt()
         AuthService.update_profile(user_id, request.get_json(), claims.get('login_type'))
         return jsonify({"message": "Cập nhật thành công"}), 200
@@ -67,7 +67,7 @@ def upload_avatar():
         return jsonify({"error": "Chưa chọn file"}), 400
         
     try:
-        url = AuthService.update_avatar(get_jwt_identity(), request.files['avatar'])
+        url = AuthService.update_avatar(int(get_jwt_identity()), request.files['avatar'])
         return jsonify({"message": "OK", "avatar_url": url}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -76,7 +76,7 @@ def upload_avatar():
 @jwt_required()
 def change_password():
     """User tự đổi mật khẩu của mình"""
-    user_id = get_jwt_identity()
+    user_id = int(get_jwt_identity())
     user = db.session.get(User, user_id)
     
     data = request.get_json()

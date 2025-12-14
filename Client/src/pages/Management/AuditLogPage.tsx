@@ -84,10 +84,10 @@ export default function AuditLogPage() {
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead className="bg-gray-50 dark:bg-gray-800">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-[180px]">Thời gian</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-[200px]">Người thực hiện</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider w-[150px]">Hành động</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Chi tiết thay đổi</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider w-[180px]">Thời gian</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider w-[200px]">Người thực hiện</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider w-[150px]">Hành động</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Chi tiết thay đổi</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">
@@ -104,9 +104,9 @@ export default function AuditLogPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap align-top">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border
-                          ${log.action.includes('DELETE') ? 'bg-red-50 text-red-700 border-red-100' : 
-                            log.action.includes('UPDATE') ? 'bg-orange-50 text-orange-700 border-orange-100' :
-                            'bg-blue-50 text-blue-700 border-blue-100'}`}>
+                          ${log.action.includes('DELETE') ? 'bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600' : 
+                            log.action.includes('UPDATE') ? 'bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800' :
+                            'bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800'}`}>
                           {log.action}
                         </span>
                       </td>

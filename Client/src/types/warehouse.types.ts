@@ -19,7 +19,10 @@ export interface Product {
   quantity_in_stock: number;
   
   // Giá chuẩn/Giá niêm yết
-  standard_price: number; 
+  standard_price: number;
+  
+  // Trạng thái bán hàng
+  is_active: boolean;
 }
 
 // --- 3. NHẬP KHO (IMPORT SLIP) ---

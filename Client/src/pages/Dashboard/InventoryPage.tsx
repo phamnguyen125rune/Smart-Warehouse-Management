@@ -22,6 +22,7 @@ export default function InventoryPage() {
 
   // --- States ---
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<'active' | 'inactive'>('active');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10); // Cố định 10 dòng để không vỡ trang
   const [sortConfig, setSortConfig] = useState<{ key: keyof Product; direction: 'asc' | 'desc' } | null>(null);
@@ -29,11 +30,29 @@ export default function InventoryPage() {
   // Edit Modal
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  
+  // Toggle loading state
+  const [toggleLoading, setToggleLoading] = useState<number | null>(null);
 
   // --- ACTIONS ---
   const handleRowClick = (product: Product) => {
       setEditingProduct(product);
       setIsEditOpen(true);
+  };
+
+  const handleToggleActive = async (product: Product, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setToggleLoading(product.id);
+    try {
+      const response = await warehouseService.toggleProductActive(product.id, !product.is_active);
+      if (response.success) {
+        await fetchProducts();
+      }
+    } catch (error) {
+      console.error('Error toggling product status:', error);
+    } finally {
+      setToggleLoading(null);
+    }
   };
 
   const fetchProducts = async () => {
@@ -71,7 +90,10 @@ export default function InventoryPage() {
         });
     }
 
-    // 2. Sort
+    // 2. Filter by status
+    result = result.filter(p => statusFilter === 'active' ? p.is_active : !p.is_active);
+
+    // 3. Sort
     if (sortConfig) {
       result.sort((a, b) => {
         const aValue = a[sortConfig.key] ?? "";
@@ -82,7 +104,7 @@ export default function InventoryPage() {
       });
     }
     return result;
-  }, [products, searchTerm, sortConfig]);
+  }, [products, searchTerm, statusFilter, sortConfig]);
 
   // 3. Cắt trang (Chỉ lấy 10 dòng cho trang hiện tại)
   const totalItems = processedData.length;
@@ -93,8 +115,8 @@ export default function InventoryPage() {
     return processedData.slice(start, start + itemsPerPage);
   }, [processedData, currentPage, itemsPerPage]);
 
-  // Reset về trang 1 khi search
-  useEffect(() => { setCurrentPage(1); }, [searchTerm]);
+  // Reset về trang 1 khi search hoặc filter
+  useEffect(() => { setCurrentPage(1); }, [searchTerm, statusFilter]);
 
   const handleSort = (key: keyof Product) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -113,17 +135,27 @@ export default function InventoryPage() {
 
         {/* TOOLBAR */}
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative w-full sm:w-72">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <SearchIcon />
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative w-full sm:w-72">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <SearchIcon />
+              </div>
+              <input
+                type="text"
+                placeholder="Tìm theo tên hoặc SKU..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:border-gray-700 dark:text-white transition-all"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
-            <input
-              type="text"
-              placeholder="Tìm theo tên hoặc SKU..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:border-gray-700 dark:text-white transition-all"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as 'active' | 'inactive')}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            >
+              <option value="active">Đang bán</option>
+              <option value="inactive">Ngừng bán</option>
+            </select>
           </div>
           <button onClick={fetchProducts} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700">
             Làm mới
@@ -165,9 +197,9 @@ export default function InventoryPage() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-center">
                           {isOutOfStock ? (
-                            <span className="px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full bg-red-100 text-red-800 border border-red-200">Hết hàng</span>
+                            <span className="px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full bg-gray-100 text-gray-600 border border-gray-300 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600">Hết hàng</span>
                           ) : isLowStock ? (
-                            <span className="px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200">Sắp hết</span>
+                            <span className="px-2.5 py-0.5 inline-flex text-xs font-medium rounded-full bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800">Sắp hết</span>
                           ) : (
                             <span className="text-sm font-bold text-gray-700 dark:text-gray-300">{product.quantity_in_stock}</span>
                           )}
