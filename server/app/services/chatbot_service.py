@@ -8,7 +8,7 @@ from app.extensions import db
 
 # --- CẤU HÌNH ---
 # Dán Key mới của bạn vào đây
-GOOGLE_API_KEY = "AIzaSyDg-b2hCTdH7ppvPMJRCl6cTXAO33Pb8g4"
+GOOGLE_API_KEY = "AIzaSyAg4ZqdBAr5ADsaY0B5m8Bcsc84j2hN1ts"
 
 class ChatbotService:
     # 1. Thông tin tĩnh (AI sẽ dùng cái này để trả lời các câu hỏi chung) 

@@ -3,6 +3,7 @@ import os
 from flask import Blueprint, request, jsonify, current_app 
 from werkzeug.utils import secure_filename 
 from app.services.warehouse_service import WarehouseService
+from app.services.notification_service import NotificationService
 
 warehouse_bp = Blueprint('warehouse', __name__)
 
@@ -23,6 +24,12 @@ def create_import_slip():
     try:
         # Gọi Service, không cần quan tâm logic DB ở đây
         new_slip = WarehouseService.create_import_slip(request.get_json())
+        NotificationService.broadcast_to_role(
+            role_name="employee",
+            title="Thông báo nhập kho",
+            message=f"Quản lí vừa nhập kho.\n Hãy phân bổ vào kho hàng",
+            category_name="Nhân sự"
+        )
         return jsonify({
             "success": True, 
             "message": "Phiếu nhập kho đã được lưu", 
